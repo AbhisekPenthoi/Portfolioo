@@ -71,11 +71,17 @@ const About = () => {
             >
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000"></div>
-                <div className="relative">
+                <div className="relative aspect-[3/4] w-full">
                   <img
                     src="/images/about.jpg"
                     alt="Profile"
-                    className="w-full h-[450px] object-cover rounded-2xl shadow-2xl"
+                    className="w-full h-full object-cover object-center rounded-2xl shadow-2xl"
+                    style={{
+                      imageRendering: 'crisp-edges',
+                      maxWidth: '100%',
+                      height: 'auto'
+                    }}
+                    loading="eager"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A1F]/80 to-transparent rounded-2xl" />
                 </div>
