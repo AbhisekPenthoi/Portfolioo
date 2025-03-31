@@ -21,7 +21,7 @@ const ProfilePhoto = () => {
       <div className="relative">
         <div className="w-48 h-48 rounded-full overflow-hidden border-2 border-white/10">
           <img
-            src="/profile.jpg"
+            src="/images/profile.jpg"
             alt="Abhisek Penthoi"
             className="w-full h-full object-cover transform group-hover:scale-110 transition duration-500"
           />
