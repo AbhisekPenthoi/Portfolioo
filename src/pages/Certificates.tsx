@@ -228,7 +228,7 @@ const CertificateCard = ({ certificate, index, onClick }: CertificateCardProps) 
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: index * 0.1 }}
     onClick={onClick}
-    className="group relative bg-gray-900/30 backdrop-blur-sm rounded-2xl border border-gray-800 overflow-hidden cursor-pointer hover:border-indigo-500/50 transition-colors"
+    className="group relative animate-border-light bg-gray-900/30 backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer"
   >
     <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     

@@ -233,7 +233,7 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => (
     exit={{ opacity: 0, scale: 0.9 }}
     transition={{ duration: 0.5, delay: index * 0.1 }}
     onClick={onClick}
-    className="group relative bg-gray-900/30 backdrop-blur-sm rounded-2xl border border-gray-800 overflow-hidden cursor-pointer"
+    className="group relative animate-border-light bg-gray-900/30 backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer"
   >
     <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     

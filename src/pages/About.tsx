@@ -172,7 +172,7 @@ const SkillCard = ({ icon, title, skills }: SkillCardProps) => (
   <motion.div
     whileHover={{ scale: 1.02 }}
     whileTap={{ scale: 0.98 }}
-    className="group bg-gray-900/50 backdrop-blur-sm p-6 rounded-xl border border-gray-800 hover:border-indigo-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/10"
+    className="group animate-border-light bg-gray-900/50 backdrop-blur-sm p-6 rounded-xl hover:shadow-lg hover:shadow-indigo-500/10"
   >
     <div className="text-3xl text-indigo-400 mb-4">{icon}</div>
     <h3 className="text-xl font-bold text-white mb-4 group-hover:text-indigo-400 transition-colors duration-300">

@@ -12,18 +12,18 @@ const ProfilePhoto = () => {
         delay: 0.1,
         duration: 0.7
       }}
-      className="relative group"
+      className="relative group w-full h-full flex items-center justify-center"
     >
       {/* Decorative ring */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
       
       {/* Profile photo container */}
-      <div className="relative">
-        <div className="w-48 h-48 rounded-full overflow-hidden border-2 border-white/10">
+      <div className="relative w-full h-full">
+        <div className="aspect-square w-full h-full rounded-full overflow-hidden border-2 border-white/10">
           <img
             src="/images/profile.jpg"
             alt="Abhisek Penthoi"
-            className="w-full h-full object-cover transform group-hover:scale-110 transition duration-500"
+            className="w-full h-full object-cover object-center transform group-hover:scale-110 transition duration-500"
           />
         </div>
         
