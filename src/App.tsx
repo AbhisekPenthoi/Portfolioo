@@ -19,7 +19,6 @@ const App = () => {
   const [isReducedMotion, setIsReducedMotion] = useState(false);
 
   useEffect(() => {
-    // Check user's motion preference
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setIsReducedMotion(mediaQuery.matches);
 
@@ -29,7 +28,6 @@ const App = () => {
 
     mediaQuery.addEventListener('change', handleMotionPreferenceChange);
 
-    // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
@@ -45,46 +43,56 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A1F] flex flex-col relative">
-      {!isReducedMotion && (
-        <>
-          <ParticleBackground />
-          <MouseTrail />
-        </>
-      )}
-      <Navigation />
-      <main className="flex-grow pt-16 relative z-10">
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={
-              <PageTransition>
-                <Home />
-              </PageTransition>
-            } />
-            <Route path="/about" element={
-              <PageTransition>
-                <About />
-              </PageTransition>
-            } />
-            <Route path="/skills" element={
-              <PageTransition>
-                <Skills />
-              </PageTransition>
-            } />
-            <Route path="/projects" element={
-              <PageTransition>
-                <Projects />
-              </PageTransition>
-            } />
-            <Route path="/certificates" element={
-              <PageTransition>
-                <Certificates />
-              </PageTransition>
-            } />
-          </Routes>
-        </AnimatePresence>
-      </main>
-      <Footer />
+    <div className="relative min-h-screen w-full">
+      <ParticleBackground />
+      
+      <div className="relative flex flex-col min-h-screen z-[5]">
+        <Navigation />
+        <main className="flex-grow pt-16">
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={
+                <PageTransition>
+                  <div className="bg-transparent">
+                    <Home />
+                  </div>
+                </PageTransition>
+              } />
+              <Route path="/about" element={
+                <PageTransition>
+                  <div className="bg-transparent">
+                    <About />
+                  </div>
+                </PageTransition>
+              } />
+              <Route path="/skills" element={
+                <PageTransition>
+                  <div className="bg-transparent">
+                    <Skills />
+                  </div>
+                </PageTransition>
+              } />
+              <Route path="/projects" element={
+                <PageTransition>
+                  <div className="bg-transparent">
+                    <Projects />
+                  </div>
+                </PageTransition>
+              } />
+              <Route path="/certificates" element={
+                <PageTransition>
+                  <div className="bg-transparent">
+                    <Certificates />
+                  </div>
+                </PageTransition>
+              } />
+            </Routes>
+          </AnimatePresence>
+        </main>
+        <Footer />
+      </div>
+
+      {!isReducedMotion && <MouseTrail />}
     </div>
   );
 };

@@ -24,7 +24,7 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A1F]/80 backdrop-blur-md border-b border-gray-800">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A1F]/50 backdrop-blur-md border-b border-gray-800">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
@@ -71,7 +71,7 @@ const Navigation = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-[#0A0A1F]/95 border-b border-gray-800"
+            className="md:hidden bg-[#0A0A1F]/95 backdrop-blur-md border-b border-gray-800"
           >
             <div className="container mx-auto px-4 py-4">
               <ul className="flex flex-col space-y-2">

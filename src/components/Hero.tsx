@@ -18,29 +18,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-gray-900 overflow-hidden">
-      {/* Simplified background waves */}
-      <div className="absolute inset-0 z-0">
-        {[1, 2].map((i) => (  // Reduced from 3 to 2 waves
-          <motion.div
-            key={i}
-            className="absolute inset-0 opacity-20"
-            style={{
-              background: `radial-gradient(circle at 50% 50%, #4f46e5 0%, transparent ${70 + i * 10}%)`,
-            }}
-            animate={{
-              scale: [1, 1.1, 1],
-              opacity: [0.2, 0.25, 0.2],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              delay: i * 2,
-            }}
-          />
-        ))}
-      </div>
-
+    <div className="relative min-h-screen overflow-hidden">
       <div className="relative z-10 container mx-auto px-6 py-32">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

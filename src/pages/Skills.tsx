@@ -10,6 +10,7 @@ import {
   SiPostgresql, SiGithub, SiPostman
 } from 'react-icons/si';
 import ScrollReveal from '../components/ScrollReveal';
+import TechParticles from '../components/TechParticles';
 
 const Skills = () => {
   const skillCategories = [
@@ -58,7 +59,8 @@ const Skills = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-[#0A0A1F] py-12 px-4 sm:px-6">
+    <div className="min-h-screen w-full py-12 px-4 sm:px-6">
+      <TechParticles />
       <motion.div className="max-w-7xl mx-auto">
         <ScrollReveal>
           <motion.h1 className="text-4xl sm:text-5xl font-bold text-center mb-4">

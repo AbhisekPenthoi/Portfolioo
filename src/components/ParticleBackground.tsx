@@ -11,28 +11,16 @@ class Particle {
   constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
-    this.size = Math.random() * 3;
-    this.speedX = Math.random() * 2 - 1;
-    this.speedY = Math.random() * 2 - 1;
-    this.opacity = Math.random() * 0.5;
+    this.size = Math.random() * 2 + 1;
+    this.speedX = Math.random() * 1 - 0.5;
+    this.speedY = Math.random() * 1 - 0.5;
+    this.opacity = Math.random() * 0.5 + 0.5;
   }
 
-  update(mouseX: number, mouseY: number, width: number, height: number) {
-    // Move particles
+  update(width: number, height: number) {
     this.x += this.speedX;
     this.y += this.speedY;
 
-    // Mouse interaction
-    const dx = mouseX - this.x;
-    const dy = mouseY - this.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    if (distance < 100) {
-      const angle = Math.atan2(dy, dx);
-      this.x -= Math.cos(angle) * 1;
-      this.y -= Math.sin(angle) * 1;
-    }
-
-    // Wrap around screen
     if (this.x < 0) this.x = width;
     if (this.x > width) this.x = 0;
     if (this.y < 0) this.y = height;
@@ -40,9 +28,9 @@ class Particle {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(147, 51, 234, ${this.opacity})`;
     ctx.fill();
   }
 }
@@ -50,36 +38,32 @@ class Particle {
 const ParticleBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
-  const mouseRef = useRef({ x: 0, y: 0 });
   const animationFrameRef = useRef<number>();
 
   useEffect(() => {
+    console.log('ParticleBackground mounted');
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      console.error('Canvas element not found!');
+      return;
+    }
 
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      console.error('Could not get canvas context!');
+      return;
+    }
 
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
+    const resizeCanvas = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current = {
-        x: e.clientX,
-        y: e.clientY
-      };
-    };
-
-    const initParticles = () => {
+    const createParticles = () => {
+      const numberOfParticles = 100;
       particlesRef.current = [];
-      const numberOfParticles = Math.min(
-        Math.floor((canvas.width * canvas.height) / 15000),
-        100
-      );
-      
       for (let i = 0; i < numberOfParticles; i++) {
         particlesRef.current.push(
           new Particle(
@@ -90,20 +74,18 @@ const ParticleBackground = () => {
       }
     };
 
-    const animate = () => {
-      if (!ctx || !canvas) return;
+    const drawParticles = () => {
+      // Clear canvas with background
+      ctx.fillStyle = '#0A0A1F';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Update and draw particles
+      // Draw particles
       particlesRef.current.forEach(particle => {
-        particle.update(mouseRef.current.x, mouseRef.current.y, canvas.width, canvas.height);
+        particle.update(canvas.width, canvas.height);
         particle.draw(ctx);
       });
 
       // Draw connections
-      ctx.strokeStyle = 'rgba(99, 102, 241, 0.1)';
-      ctx.lineWidth = 0.5;
       for (let i = 0; i < particlesRef.current.length; i++) {
         for (let j = i + 1; j < particlesRef.current.length; j++) {
           const dx = particlesRef.current[i].x - particlesRef.current[j].x;
@@ -112,6 +94,7 @@ const ParticleBackground = () => {
 
           if (distance < 100) {
             ctx.beginPath();
+            ctx.strokeStyle = `rgba(147, 51, 234, ${1 - distance / 100})`;
             ctx.moveTo(particlesRef.current[i].x, particlesRef.current[i].y);
             ctx.lineTo(particlesRef.current[j].x, particlesRef.current[j].y);
             ctx.stroke();
@@ -119,29 +102,49 @@ const ParticleBackground = () => {
         }
       }
 
-      animationFrameRef.current = requestAnimationFrame(animate);
+      animationFrameRef.current = requestAnimationFrame(drawParticles);
     };
 
-    handleResize();
+    resizeCanvas();
+    createParticles();
+    drawParticles();
+
+    const handleResize = () => {
+      resizeCanvas();
+      createParticles();
+    };
+
     window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
-    animate();
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-      style={{ background: 'transparent' }}
-    />
+    <div className="fixed inset-0 isolate">
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+          background: '#0A0A1F'
+        }}
+      />
+      <div 
+        className="fixed inset-0 z-[2] pointer-events-none bg-gradient-to-br from-purple-600/10 via-blue-600/5 to-indigo-600/10"
+        style={{
+          backgroundBlendMode: 'overlay'
+        }}
+      />
+    </div>
   );
 };
 

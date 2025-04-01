@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaExternalLinkAlt, FaTimes, FaMedal, FaCalendarAlt } from 'react-icons/fa';
+import TechParticles from '../components/TechParticles';
 
 interface Certificate {
   title: string;
@@ -108,12 +109,8 @@ const Certificates = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-[#0A0A1F] overflow-hidden">
-      {/* Background Effects */}
-      <div className="fixed inset-0 bg-gradient-to-br from-purple-600/10 via-blue-600/5 to-indigo-600/10" />
-      <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl" />
-
+    <div className="min-h-screen w-full overflow-hidden">
+      <TechParticles />
       <div className="relative container mx-auto px-4 sm:px-6 py-16">
         {/* Header Section */}
         <motion.div
