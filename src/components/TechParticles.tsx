@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState, useCallback } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { 
   SiReact, SiNodedotjs, SiMongodb, SiExpress,
   SiTypescript, SiJavascript, SiTailwindcss, SiRedux,
@@ -23,6 +23,7 @@ interface TechParticle {
 const TechParticles = () => {
   const [particles, setParticles] = useState<TechParticle[]>([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const shouldReduceMotion = useReducedMotion();
 
   const techIcons = [
     SiReact, SiNodedotjs, SiMongodb, SiExpress,
@@ -30,6 +31,49 @@ const TechParticles = () => {
     SiGit, SiDocker, SiPython, SiHtml5,
     SiCss3, SiFirebase, SiPostgresql, SiAmazon
   ];
+
+  const createParticles = useCallback((mobile: boolean) => {
+    const newParticles: TechParticle[] = [];
+    // Reduced particle count for mobile
+    const numParticles = mobile ? 6 : 12;
+    const maxSize = mobile ? 24 : 32;
+    const minSize = mobile ? 16 : 24;
+    
+    // Calculate grid for better distribution
+    const gridSize = Math.ceil(Math.sqrt(numParticles));
+    const cellWidth = 100 / gridSize;
+    const cellHeight = 100 / gridSize;
+
+    for (let i = 0; i < numParticles; i++) {
+      const row = Math.floor(i / gridSize);
+      const col = i % gridSize;
+      
+      // Calculate base position within the cell
+      const baseX = col * cellWidth;
+      const baseY = row * cellHeight;
+      
+      // Add some randomness within the cell
+      const x = baseX + (Math.random() * (cellWidth * 0.6) + cellWidth * 0.2);
+      const y = baseY + (Math.random() * (cellHeight * 0.6) + cellHeight * 0.2);
+      
+      // Reduced float range for mobile
+      const floatRange = mobile ? 5 : 8;
+
+      newParticles.push({
+        Icon: techIcons[Math.floor(Math.random() * techIcons.length)],
+        x,
+        y,
+        size: Math.random() * (maxSize - minSize) + minSize,
+        duration: mobile ? 4 + Math.random() * 2 : 6 + Math.random() * 3,
+        delay: -Math.random() * 2,
+        rotation: Math.random() * 90 - 45, // Reduced rotation range
+        opacity: mobile ? 0.3 : 0.4,
+        floatRange
+      });
+    }
+
+    setParticles(newParticles);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,59 +86,43 @@ const TechParticles = () => {
       }
     };
 
-    const createParticles = (mobile: boolean) => {
-      const newParticles: TechParticle[] = [];
-      
-      // Adjusted number of particles for better visibility
-      const numParticles = mobile ? 12 : 20;
-      
-      // Significantly increased sizes for better visibility
-      const maxSize = mobile ? 32 : 40;
-      const minSize = mobile ? 24 : 32;
-
-      for (let i = 0; i < numParticles; i++) {
-        // Ensure even distribution across the screen with more spacing
-        const x = Math.random() * 80 + 10; // Keep within 10-90% range for better spacing
-        const y = Math.random() * 80 + 10; // Keep within 10-90% range for better spacing
-        
-        // Increased floating range for more noticeable movement
-        const floatRange = Math.random() * 15 + 10; // 10-25% range of movement
-
-        newParticles.push({
-          Icon: techIcons[Math.floor(Math.random() * techIcons.length)],
-          x,
-          y,
-          size: Math.random() * (maxSize - minSize) + minSize,
-          duration: Math.random() * 4 + 8, // 8-12s duration for smoother movement
-          delay: Math.random() * -4, // Varied delays
-          rotation: Math.random() * 360 - 180, // -180 to 180 degrees for more dynamic rotation
-          opacity: mobile ? 0.4 : 0.5, // Increased base opacity
-          floatRange
-        });
-      }
-
-      setParticles(newParticles);
-    };
-
     createParticles(isMobile);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isMobile]);
+    
+    const debouncedResize = debounce(handleResize, 250);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
+  }, [isMobile, createParticles]);
+
+  // Debounce function to optimize resize handling
+  function debounce(func: Function, wait: number) {
+    let timeout: ReturnType<typeof setTimeout>;
+    return function executedFunction(...args: any[]) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[1]">
       {particles.map((particle, index) => (
         <motion.div
           key={index}
-          className="absolute transition-all duration-300"
+          className="absolute transition-all duration-300 will-change-transform"
           style={{
             left: `${particle.x}%`,
             top: `${particle.y}%`,
             fontSize: particle.size,
             opacity: particle.opacity,
-            filter: 'drop-shadow(0 0 8px rgba(99, 102, 241, 0.3))' // Added subtle glow effect
+            filter: 'drop-shadow(0 0 4px rgba(99, 102, 241, 0.2))',
+            transform: 'translate3d(0,0,0)',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden'
           }}
-          animate={{
+          animate={shouldReduceMotion ? {} : {
             y: [
               `${particle.y}%`,
               `${particle.y + particle.floatRange}%`,
@@ -115,16 +143,18 @@ const TechParticles = () => {
             times: [0, 0.5, 1]
           }}
           whileHover={{
-            opacity: 0.9,
-            scale: 1.3,
-            filter: 'drop-shadow(0 0 12px rgba(99, 102, 241, 0.5))',
-            transition: { duration: 0.3 }
+            opacity: 0.8,
+            scale: 1.1,
+            filter: 'drop-shadow(0 0 6px rgba(99, 102, 241, 0.3))',
+            transition: { duration: 0.2 }
           }}
         >
           <particle.Icon 
-            className="text-indigo-400 transform-gpu hover:text-indigo-300 transition-colors duration-300"
+            className="text-indigo-400 transform-gpu hover:text-indigo-300 transition-colors duration-200"
             style={{
-              filter: 'brightness(1.2)' // Make icons slightly brighter
+              transform: 'translate3d(0,0,0)',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden'
             }}
           />
         </motion.div>

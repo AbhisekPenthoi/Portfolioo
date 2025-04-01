@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useScroll, useSpring, motion, useTransform } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { useScroll, useSpring, motion, useTransform, useReducedMotion } from 'framer-motion';
 
 interface SmoothScrollProps {
   children: React.ReactNode;
@@ -7,14 +7,37 @@ interface SmoothScrollProps {
 
 const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
   const { scrollYProgress } = useScroll();
-  const smoothProgress = useSpring(scrollYProgress, {
+  const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Optimize spring animation for mobile
+  const springConfig = isMobile ? {
+    damping: 30,
+    stiffness: 300,
+    mass: 0.8
+  } : {
     damping: 50,
     stiffness: 400,
     mass: 0.5
-  });
+  };
 
-  // Parallax effect for background elements
-  const backgroundY = useTransform(smoothProgress, [0, 1], ['0%', '20%']);
+  const smoothProgress = useSpring(scrollYProgress, springConfig);
+
+  // Reduced parallax effect for mobile
+  const backgroundY = useTransform(
+    smoothProgress,
+    [0, 1],
+    ['0%', isMobile ? '10%' : '20%']
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     // Smooth scroll behavior for anchor links
@@ -28,9 +51,13 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
         if (targetId && targetId !== '#') {
           const targetElement = document.querySelector(targetId);
           if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
+            const offset = isMobile ? 60 : 80; // Reduced offset for mobile
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: shouldReduceMotion ? 'auto' : 'smooth'
             });
           }
         }
@@ -39,7 +66,7 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
 
     document.addEventListener('click', handleAnchorClick);
     return () => document.removeEventListener('click', handleAnchorClick);
-  }, []);
+  }, [isMobile, shouldReduceMotion]);
 
   return (
     <>
@@ -52,7 +79,7 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
       {/* Background parallax effect */}
       <motion.div
         className="fixed inset-0 z-0"
-        style={{ y: backgroundY }}
+        style={{ y: shouldReduceMotion ? 0 : backgroundY }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-purple-900/20 to-blue-900/20 opacity-50" />
       </motion.div>

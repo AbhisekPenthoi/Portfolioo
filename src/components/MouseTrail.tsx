@@ -10,10 +10,27 @@ const MouseTrail = () => {
   const [points, setPoints] = useState<Point[]>([]);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  const springConfig = { damping: 25, stiffness: 700 };
+  const springConfig = isMobile ? {
+    damping: 25,
+    stiffness: 700
+  } : {
+    damping: 25,
+    stiffness: 700
+  };
+
   const springX = useSpring(mouseX, springConfig);
   const springY = useSpring(mouseY, springConfig);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const updateMousePosition = (e: MouseEvent) => {
@@ -22,14 +39,16 @@ const MouseTrail = () => {
 
       setPoints(prev => {
         const newPoints = [...prev, { x: e.clientX, y: e.clientY }];
-        if (newPoints.length > 5) newPoints.shift();
+        if (newPoints.length > (isMobile ? 3 : 5)) newPoints.shift();
         return newPoints;
       });
     };
 
     window.addEventListener('mousemove', updateMousePosition);
     return () => window.removeEventListener('mousemove', updateMousePosition);
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) return null; // Don't render on mobile devices
 
   return (
     <div className="pointer-events-none fixed inset-0 z-50">
