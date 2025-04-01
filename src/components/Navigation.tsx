@@ -8,6 +8,7 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [displayText, setDisplayText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
+  const [activeSection, setActiveSection] = useState('');
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -41,12 +42,12 @@ const Navigation = () => {
           setTimeout(() => {
             currentIndex = 0;
             isTyping = true;
-          }, 3000); // Wait for 3 seconds before restarting
+          }, 3000);
         }
       }
     };
 
-    const typingInterval = setInterval(typeText, 150); // Adjust typing speed
+    const typingInterval = setInterval(typeText, 150);
     const cursorInterval = setInterval(() => setShowCursor(prev => !prev), 500);
 
     return () => {
@@ -54,6 +55,43 @@ const Navigation = () => {
       clearInterval(cursorInterval);
     };
   }, []);
+
+  // Handle scroll and update active section
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('section[id]');
+      const scrollPosition = window.scrollY + 100;
+
+      sections.forEach(section => {
+        const sectionTop = (section as HTMLElement).offsetTop;
+        const sectionHeight = section.clientHeight;
+        const sectionId = section.getAttribute('id') || '';
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+          setActiveSection(sectionId);
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Smooth scroll to section
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offset = 80; // Height of the fixed navbar
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+    setIsOpen(false);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A1F]/50 backdrop-blur-md border-b border-gray-800">
@@ -90,6 +128,7 @@ const Navigation = () => {
               >
                 <Link
                   to={item.path}
+                  onClick={() => scrollToSection(item.label.toLowerCase())}
                   className={`px-4 py-2 rounded-lg transition-all duration-300 ${
                     isActive(item.path)
                       ? 'bg-indigo-500/20 text-indigo-400 font-medium'
@@ -142,7 +181,10 @@ const Navigation = () => {
                   >
                     <Link
                       to={item.path}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => {
+                        scrollToSection(item.label.toLowerCase());
+                        setIsOpen(false);
+                      }}
                       className={`block px-4 py-3 rounded-lg transition-all duration-300 ${
                         isActive(item.path)
                           ? 'bg-indigo-500/20 text-indigo-400 font-medium'

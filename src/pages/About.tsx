@@ -7,7 +7,7 @@ const About = () => {
   return (
     <div className="min-h-screen w-full overflow-hidden">
       <TechParticles />
-      <div className="relative container mx-auto px-4 sm:px-6 py-16">
+      <div className="relative container mx-auto px-4 sm:px-6 py-16 z-[2]">
         {/* Header Section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}

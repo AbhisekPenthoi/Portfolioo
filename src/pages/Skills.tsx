@@ -61,7 +61,7 @@ const Skills = () => {
   return (
     <div className="min-h-screen w-full py-12 px-4 sm:px-6">
       <TechParticles />
-      <motion.div className="max-w-7xl mx-auto">
+      <motion.div className="max-w-7xl mx-auto z-[2] relative">
         <ScrollReveal>
           <motion.h1 className="text-4xl sm:text-5xl font-bold text-center mb-4">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">

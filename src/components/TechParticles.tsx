@@ -82,7 +82,7 @@ const TechParticles = () => {
   }, [isMobile]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[2]">
+    <div className="fixed inset-0 pointer-events-none z-[1]">
       {particles.map((particle, index) => (
         <motion.div
           key={index}

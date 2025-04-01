@@ -12,6 +12,7 @@ import LoadingScreen from './components/LoadingScreen';
 import MouseTrail from './components/MouseTrail';
 import PageTransition from './components/PageTransition';
 import ParticleBackground from './components/ParticleBackground';
+import SmoothScroll from './components/SmoothScroll';
 
 const App = () => {
   const location = useLocation();
@@ -43,57 +44,59 @@ const App = () => {
   }
 
   return (
-    <div className="relative min-h-screen w-full">
-      <ParticleBackground />
-      
-      <div className="relative flex flex-col min-h-screen z-[5]">
-        <Navigation />
-        <main className="flex-grow pt-16">
-          <AnimatePresence mode="wait">
-            <Routes location={location} key={location.pathname}>
-              <Route path="/" element={
-                <PageTransition>
-                  <div className="bg-transparent">
-                    <Home />
-                  </div>
-                </PageTransition>
-              } />
-              <Route path="/about" element={
-                <PageTransition>
-                  <div className="bg-transparent">
-                    <About />
-                  </div>
-                </PageTransition>
-              } />
-              <Route path="/skills" element={
-                <PageTransition>
-                  <div className="bg-transparent">
-                    <Skills />
-                  </div>
-                </PageTransition>
-              } />
-              <Route path="/projects" element={
-                <PageTransition>
-                  <div className="bg-transparent">
-                    <Projects />
-                  </div>
-                </PageTransition>
-              } />
-              <Route path="/certificates" element={
-                <PageTransition>
-                  <div className="bg-transparent">
-                    <Certificates />
-                  </div>
-                </PageTransition>
-              } />
-            </Routes>
-          </AnimatePresence>
-        </main>
-        <Footer />
-      </div>
+    <SmoothScroll>
+      <div className="relative min-h-screen w-full">
+        <ParticleBackground />
+        
+        <div className="relative flex flex-col min-h-screen z-[5]">
+          <Navigation />
+          <main className="flex-grow pt-16">
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route path="/" element={
+                  <PageTransition>
+                    <div className="bg-transparent">
+                      <Home />
+                    </div>
+                  </PageTransition>
+                } />
+                <Route path="/about" element={
+                  <PageTransition>
+                    <div className="bg-transparent">
+                      <About />
+                    </div>
+                  </PageTransition>
+                } />
+                <Route path="/skills" element={
+                  <PageTransition>
+                    <div className="bg-transparent">
+                      <Skills />
+                    </div>
+                  </PageTransition>
+                } />
+                <Route path="/projects" element={
+                  <PageTransition>
+                    <div className="bg-transparent">
+                      <Projects />
+                    </div>
+                  </PageTransition>
+                } />
+                <Route path="/certificates" element={
+                  <PageTransition>
+                    <div className="bg-transparent">
+                      <Certificates />
+                    </div>
+                  </PageTransition>
+                } />
+              </Routes>
+            </AnimatePresence>
+          </main>
+          <Footer />
+        </div>
 
-      {!isReducedMotion && <MouseTrail />}
-    </div>
+        {!isReducedMotion && <MouseTrail />}
+      </div>
+    </SmoothScroll>
   );
 };
 
